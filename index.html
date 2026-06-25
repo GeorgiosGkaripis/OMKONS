@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>Παρακολούθηση Εργασιών</title>
+
+<style>
+body { font-family: Arial; background:#f5f5f5; margin:0; padding:20px; }
+.container { max-width:1100px; margin:auto; }
+
+h1 { color:#1f3b5d; }
+
+.map { width:100%; border:2px solid #ccc; border-radius:10px; display:none; }
+
+.section-title { font-size:20px; font-weight:bold; margin-top:30px; color:#1f3b5d; }
+
+.btn {
+  padding:12px 20px;
+  background:#1f7ae0;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin:5px;
+  font-weight:bold;
+}
+.btn:hover { background:#1559a5; }
+
+.popup {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.55);
+  display:none; justify-content:center; align-items:center;
+}
+
+.box {
+  background:#fff; padding:25px; width:420px;
+  border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.25);
+  position:relative;
+  text-align:center;
+}
+
+.photo-box img {
+  width:100%;
+  border-radius:10px;
+}
+
+.arrow-btn {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:#1f7ae0;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  font-size:20px;
+  cursor:pointer;
+  border-radius:6px;
+}
+.arrow-btn:hover { background:#1559a5; }
+
+#prevBtn { left:-60px; }
+#nextBtn { right:-60px; }
+
+#counter {
+  margin-top:10px;
+  font-size:16px;
+  font-weight:bold;
+  color:#333;
+}
+
+.close { background:#444 !important; margin-top:15px; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Παρακολούθηση Εργασιών</h1>
+
+  <!-- Φόρτωση κάτοψης -->
+  <label style="font-weight:bold;">Φόρτωση Κάτοψης:</label><br><br>
+  <input type="file" id="upload" accept="image/*" onchange="loadMap(event)"><br><br>
+
+  <!-- Κάτοψη -->
+  <img id="mapImage" class="map">
+
+  <!-- Μενού μετώπων -->
+  <div class="section-title">Επιλογή Μετώπου</div>
+  <button class="btn" onclick="selectPoint('01')">01_Κωδωνοστασίου</button>
+  <button class="btn" onclick="selectPoint('02')">02 Παναγία Πορταΐτισσα</button>
+  <button class="btn" onclick="selectPoint('03')">03 Άγιοι Κωνσταντίνος</button>
+
+  <!-- Κατηγορίες Εργασιών -->
+  <div id="submenu" style="display:none;">
+    <div class="section-title" id="submenuTitle"></div>
+    <button class="btn" onclick="openSub('Προς Υλοποίηση')">Προς Υλοποίηση</button>
+    <button class="btn" onclick="openSub('Σε Εξέλιξη')">Σε Εξέλιξη</button>
+    <button class="btn" onclick="openSub('Ολοκληρώθηκε')">Ολοκληρώθηκε</button>
+  </div>
+
+  <!-- Εργασίες -->
+  <div id="taskMenu"></div>
+
+</div>
+
+<!-- Popup φωτογραφιών -->
+<div class="popup" id="photopopup">
+  <div class="box photo-box">
+
+    <h2 id="photoTitle"></h2>
+
+    <button id="prevBtn" class="arrow-btn">←</button>
+
+    <img id="photoImg" src="">
+
+    <button id="nextBtn" class="arrow-btn">→</button>
+
+    <div id="counter">1 / 1</div>
+
+    <button class="btn close" onclick="closePhoto()">Κλείσιμο</button>
+  </div>
+</div>
+
+<script>
+let currentPoint = "";
+let currentCategory = "";
+let currentPhotos = [];
+let currentIndex = 0;
+
+// Εργασίες ανά μέτωπο — με πολλαπλές φωτογραφίες
+const tasks = {
+  "01": {
+    "Προς Υλοποίηση": {
+      "Επιχρίσματα": [
+        "epichrismata_01.jpg",
+        "epichrismata_02.jpg",
+        "epichrismata_03.jpg"
+      ],
+      "Ελκυστήρες": [
+        "elkystires_01.jpg",
+        "elkystires_02.jpg"
+      ]
+    },
+    "Ολοκληρώθηκε": {
+      "Αποκατάσταση": ["apokatastasi_01.jpg"],
+      "Βαθ. Αρμολογήματα": ["armologimata_01.jpg"],
+      "Ενέματα": ["enemata_01.jpg"],
+      "Τυφλά Βλήτρα": ["tyfla_01.jpg"],
+      "Ραφές inox": ["inox_01.jpg"]
+    },
+    "Σε Εξέλιξη": {
+      "-": ["-"]
+    }
+  },
+
+  "02": {
+    "Προς Υλοποίηση": {
+      "-": ["-"]
+    },
+    "Ολοκληρώθηκε": {
+      "Αποκατάσταση τόξων": ["apokatastasi_toxon2.jpg"],
+      "Ενέματα τοπικά": [
+        "enemata_topika_1.jpg",
+        "enemata_topika_2.jpg"
+      ],
+      "Καθαιρέσεις": ["kathariseis.jpg"],
+      "Ικριώματα": ["ikriomata2.jpg"],
+      "Ραφές με inox": ["rafes_me_inox.jpg"]
+    },
+    "Σε Εξέλιξη": {
+      "Ελκυστήρες Υφιστάμενη": ["elkystires_yfistameni.jpg"],
+      "Τυφλά Βλήτρα": ["tyfla_vlitra.jpg"]
+    }
+  },
+
+  "03": {
+    "Προς Υλοποίηση": {
+      "Ελκυστήρες": ["elkystires_03.jpg"],
+      "Ενέματα": ["enemata_03.jpg"],
+      "Προς επιχρίσματα": ["pros_epichrismata.jpg"],
+      "Ικριώματα": ["ikriomata.jpg"]
+    },
+    "Ολοκληρώθηκε": {
+      "Καθαιρέσεις": ["kathariseis.jpg"]
+    },
+    "Σε Εξέλιξη": {
+      "Αποκατάσταση τόξων": ["apokatastasi_toxon.jpg"],
+      "Ραφές με inox": ["rafes_me_inox.jpg"],
+      "Βαθιά Αρμολογήματα": ["armologimata.jpg"]
+    }
+  }
+};
+
+// Φόρτωση κάτοψης
+function loadMap(event) {
+  const img = document.getElementById("mapImage");
+  img.src = URL.createObjectURL(event.target.files[0]);
+  img.style.display = "block";
+}
+
+// Επιλογή μετώπου
+function selectPoint(point) {
+  currentPoint = point;
+
+  const titles = {
+    "01": "01_Κωδωνοστασίου – Κατηγορίες Εργασιών",
+    "02": "02 Παναγία Πορταΐτισσα – Κατηγορίες Εργασιών",
+    "03": "03 Άγιοι Κωνσταντίνος – Κατηγορίες Εργασιών"
+  };
+
+  document.getElementById("submenuTitle").innerText = titles[point];
+  document.getElementById("submenu").style.display = "block";
+  document.getElementById("taskMenu").innerHTML = "";
+}
+
+// Άνοιγμα κατηγορίας
+function openSub(category) {
+  currentCategory = category;
+
+  let container = document.getElementById("taskMenu");
+  container.innerHTML = "";
+
+  let items = tasks[currentPoint][category];
+
+  container.innerHTML = `<div class="section-title">${category}</div>`;
+
+  for (let task in items) {
+    container.innerHTML += `
+      <button class="btn" onclick="openPhoto('${task}')">
+        ${task}
+      </button>`;
+  }
+}
+
+// Popup slider
+function openPhoto(task) {
+  currentPhotos = tasks[currentPoint][currentCategory][task];
+  currentIndex = 0;
+
+  document.getElementById("photoTitle").innerText = task;
+  document.getElementById("photoImg").src = currentPhotos[currentIndex];
+
+  updateCounter();
+
+  document.getElementById("photopopup").style.display = "flex";
+
+  document.getElementById("prevBtn").onclick = () => changePhoto(-1);
+  document.getElementById("nextBtn").onclick = () => changePhoto(1);
+}
+
+function changePhoto(direction) {
+  currentIndex += direction;
+
+  if (currentIndex < 0) currentIndex = currentPhotos.length - 1;
+  if (currentIndex >= currentPhotos.length) currentIndex = 0;
+
+  document.getElementById("photoImg").src = currentPhotos[currentIndex];
+  updateCounter();
+}
+
+function updateCounter() {
+  document.getElementById("counter").innerText =
+    (currentIndex + 1) + " / " + currentPhotos.length;
+}
+
+function closePhoto() {
+  document.getElementById("photopopup").style.display = "none";
+}
+</script>
+
+</body>
+</html>
