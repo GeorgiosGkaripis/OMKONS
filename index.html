@@ -31,11 +31,36 @@ h1 { color:#1f3b5d; }
   background:rgba(0,0,0,0.55);
   display:none; justify-content:center; align-items:center;
 }
+
 .box {
-  background:#fff; padding:25px; width:380px;
+  background:#fff; padding:25px; width:420px;
   border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.25);
+  position:relative;
+  text-align:center;
 }
-.photo-box img { width:100%; border-radius:10px; margin-bottom:15px; }
+
+.photo-box img {
+  width:100%;
+  border-radius:10px;
+}
+
+.arrow-btn {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:#1f7ae0;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  font-size:20px;
+  cursor:pointer;
+  border-radius:6px;
+}
+.arrow-btn:hover { background:#1559a5; }
+
+#prevBtn { left:-60px; }
+#nextBtn { right:-60px; }
+
 .close { background:#444 !important; margin-top:15px; }
 </style>
 </head>
@@ -75,8 +100,15 @@ h1 { color:#1f3b5d; }
 <!-- Popup φωτογραφιών -->
 <div class="popup" id="photopopup">
   <div class="box photo-box">
+
     <h2 id="photoTitle"></h2>
-    <div id="photoContainer"></div>
+
+    <button id="prevBtn" class="arrow-btn">←</button>
+
+    <img id="photoImg" src="">
+
+    <button id="nextBtn" class="arrow-btn">→</button>
+
     <button class="btn close" onclick="closePhoto()">Κλείσιμο</button>
   </div>
 </div>
@@ -84,6 +116,8 @@ h1 { color:#1f3b5d; }
 <script>
 let currentPoint = "";
 let currentCategory = "";
+let currentPhotos = [];
+let currentIndex = 0;
 
 // Εργασίες ανά μέτωπο — ΜΕ ΠΟΛΛΑΠΛΕΣ ΦΩΤΟΓΡΑΦΙΕΣ
 const tasks = {
@@ -179,20 +213,27 @@ function openSub(category) {
   }
 }
 
-// Popup με ΠΟΛΛΑΠΛΕΣ φωτογραφίες
+// Popup slider
 function openPhoto(task) {
-  const photos = tasks[currentPoint][currentCategory][task];
+  currentPhotos = tasks[currentPoint][currentCategory][task];
+  currentIndex = 0;
 
   document.getElementById("photoTitle").innerText = task;
-
-  let html = "";
-  photos.forEach(src => {
-    html += `<img src="${src}">`;
-  });
-
-  document.getElementById("photoContainer").innerHTML = html;
+  document.getElementById("photoImg").src = currentPhotos[currentIndex];
 
   document.getElementById("photopopup").style.display = "flex";
+
+  document.getElementById("prevBtn").onclick = () => changePhoto(-1);
+  document.getElementById("nextBtn").onclick = () => changePhoto(1);
+}
+
+function changePhoto(direction) {
+  currentIndex += direction;
+
+  if (currentIndex < 0) currentIndex = currentPhotos.length - 1;
+  if (currentIndex >= currentPhotos.length) currentIndex = 0;
+
+  document.getElementById("photoImg").src = currentPhotos[currentIndex];
 }
 
 function closePhoto() {
@@ -202,3 +243,4 @@ function closePhoto() {
 
 </body>
 </html>
+ 
