@@ -10,7 +10,7 @@ body { font-family: Arial; background:#f5f5f5; margin:0; padding:20px; }
 
 h1 { color:#1f3b5d; }
 
-.map { width:100%; border:2px solid #ccc; border-radius:10px; display:none; }
+.map { width:100%; border:2px solid #ccc; border-radius:10px; display:block; }
 
 .section-title { font-size:20px; font-weight:bold; margin-top:30px; color:#1f3b5d; }
 
@@ -78,12 +78,8 @@ h1 { color:#1f3b5d; }
 
   <h1>Παρακολούθηση Εργασιών</h1>
 
-  <!-- Φόρτωση κάτοψης -->
-  <label style="font-weight:bold;">Φόρτωση Κάτοψης:</label><br><br>
-  <input type="file" id="upload" accept="image/*" onchange="loadMap(event)"><br><br>
-
-  <!-- Κάτοψη -->
-  <img id="mapImage" class="map">
+  <!-- Κάτοψη (ΑΥΤΟΜΑΤΗ ΦΟΡΤΩΣΗ) -->
+  <img id="mapImage" class="map" src="Konstamonitoy_top.jpg">
 
   <!-- Μενού μετώπων -->
   <div class="section-title">Επιλογή Μετώπου</div>
@@ -191,13 +187,6 @@ const tasks = {
     }
   }
 };
-
-// Φόρτωση κάτοψης
-function loadMap(event) {
-  const img = document.getElementById("mapImage");
-  img.src = URL.createObjectURL(event.target.files[0]);
-  img.style.display = "block";
-}
 
 // Επιλογή μετώπου
 function selectPoint(point) {
