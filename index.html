@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>Παρακολούθηση Εργασιών</title>
+
+<style>
+body { font-family: Arial; background:#f5f5f5; margin:0; padding:20px; }
+.container { max-width:1100px; margin:auto; }
+
+h1 { color:#1f3b5d; }
+
+.map { width:100%; border:2px solid #ccc; border-radius:10px; display:none; }
+
+.section-title { font-size:20px; font-weight:bold; margin-top:30px; color:#1f3b5d; }
+
+.btn {
+  padding:12px 20px;
+  background:#1f7ae0;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin:5px;
+  font-weight:bold;
+}
+.btn:hover { background:#1559a5; }
+
+.popup {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.55);
+  display:none; justify-content:center; align-items:center;
+}
+.box {
+  background:#fff; padding:25px; width:380px;
+  border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.25);
+}
+.list button { width:100%; margin:6px 0; }
+.photo-box img { width:100%; border-radius:10px; }
+.close { background:#444 !important; margin-top:15px; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Παρακολούθηση Εργασιών</h1>
+
+  <!-- Φόρτωση κάτοψης -->
+  <label style="font-weight:bold;">Φόρτωση Κάτοψης:</label><br><br>
+  <input type="file" id="upload" accept="image/*" onchange="loadMap(event)"><br><br>
+
+  <!-- Κάτοψη -->
+  <img id="mapImage" class="map">
+
+  <!-- Μενού μετώπων -->
+  <div class="section-title">Επιλογή Μετώπου</div>
+  <button class="btn" onclick="selectPoint('01')">01_ΚΩΔΩΝΟΣΤΑΣΙΟΥ</button>
+  <button class="btn" onclick="selectPoint('02')">02 Παναγία Πορταΐτισσα</button>
+  <button class="btn" onclick="selectPoint('03')">03 Άγιοι Κωνσταντίνος</button>
+
+  <!-- Κατηγορίες Εργασιών -->
+  <div id="submenu" style="display:none;">
+    <div class="section-title" id="submenuTitle"></div>
+    <button class="btn" onclick="openSub('Προς Υλοποίηση')">Προς Υλοποίηση</button>
+    <button class="btn" onclick="openSub('Σε Εξέλιξη')">Σε Εξέλιξη</button>
+    <button class="btn" onclick="openSub('Ολοκληρώθηκε')">Ολοκληρώθηκε</button>
+  </div>
+
+  <!-- Εργασίες (εμφανίζονται κάτω από τις κατηγορίες) -->
+  <div id="taskMenu"></div>
+
+</div>
+
+<!-- Popup φωτογραφίας -->
+<div class="popup" id="photopopup">
+  <div class="box photo-box">
+    <h2 id="photoTitle"></h2>
+    <img id="photoImg" src="">
+    <button class="btn close" onclick="closePhoto()">Κλείσιμο</button>
+  </div>
+</div>
+
+<script>
+let currentPoint = "";
+let currentCategory = "";
+
+// Εργασίες ανά μέτωπο
+const tasks = {
+  "01": {
+    "Προς Υλοποίηση": {
+      "Επιχρίσματα": "Επιχρίσματα (1)",
+      "Ελκυστήρες": "20260407_01_Ελκυστήρες "
+    },
+    "Σε Εξέλιξη": {
+      "Λιθοδομές": "photo3.jpg"
+    },
+    "Ολοκληρώθηκε": {
+      "Αποκατάσταση": "photo4.jpg",
+      "Βαθ. Αρμολογήματα": "photo5.jpg",
+      "Ενέματα": "photo6.jpg",
+      "Τυφλά βλήτρα": "photo7.jpg",
+      "Ραφές inox": "photo8.jpg"
+    }
+  },
+
+  "02": {
+    "Προς Υλοποίηση": { "Αρμολογήματα": "photo9.jpg" },
+    "Σε Εξέλιξη": { "Ενισχύσεις": "photo10.jpg" },
+    "Ολοκληρώθηκε": { "Στεγανοποίηση": "photo11.jpg" }
+  },
+
+  "03": {
+    "Προς Υλοποίηση": { "Επιχρίσματα": "photo12.jpg" },
+    "Σε Εξέλιξη": { "Καθαρισμοί": "photo13.jpg" },
+    "Ολοκληρώθηκε": { "Αποκατάσταση": "photo14.jpg" }
+  }
+};
+
+// Φόρτωση κάτοψης
+function loadMap(event) {
+  const img = document.getElementById("mapImage");
+  img.src = URL.createObjectURL(event.target.files[0]);
+  img.style.display = "block";
+}
+
+// Επιλογή μετώπου → εμφανίζει το δικό του υπομενού
+function selectPoint(point) {
+  currentPoint = point;
+
+  const titles = {
+    "01": "01_ΚΩΔΩΝΟΣΤΑΣΙΟΥ – Κατηγορίες Εργασιών",
+    "02": "02 Παναγία Πορταΐτισσα – Κατηγορίες Εργασιών",
+    "03": "03 Άγιοι Κωνσταντίνος – Κατηγορίες Εργασιών"
+  };
+
+  document.getElementById("submenuTitle").innerText = titles[point];
+  document.getElementById("submenu").style.display = "block";
+
+  // Καθαρίζει το task menu όταν αλλάζεις μέτωπο
+  document.getElementById("taskMenu").innerHTML = "";
+}
+
+// Άνοιγμα κατηγορίας → εμφανίζει τις εργασίες ΚΑΤΩ από το μενού
+function openSub(category) {
+  currentCategory = category;
+
+  let container = document.getElementById("taskMenu");
+  container.innerHTML = ""; // καθαρισμός
+
+  let items = tasks[currentPoint][category];
+
+  container.innerHTML = `<div class="section-title">${category}</div>`;
+
+  for (let task in items) {
+    container.innerHTML += `
+      <button class="btn" onclick="openPhoto('${task}', '${items[task]}')">
+        ${task}
+      </button>`;
+  }
+}
+
+// Φωτογραφία (popup)
+function openPhoto(task, img) {
+  document.getElementById("photoTitle").innerText = task;
+  document.getElementById("photoImg").src = img;
+  document.getElementById("photopopup").style.display = "flex";
+}
+
+function closePhoto() {
+  document.getElementById("photopopup").style.display = "none";
+}
+</script>
+
+</body>
+</html>
