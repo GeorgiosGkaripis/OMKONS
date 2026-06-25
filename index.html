@@ -35,8 +35,7 @@ h1 { color:#1f3b5d; }
   background:#fff; padding:25px; width:380px;
   border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.25);
 }
-.list button { width:100%; margin:6px 0; }
-.photo-box img { width:100%; border-radius:10px; }
+.photo-box img { width:100%; border-radius:10px; margin-bottom:15px; }
 .close { background:#444 !important; margin-top:15px; }
 </style>
 </head>
@@ -68,16 +67,16 @@ h1 { color:#1f3b5d; }
     <button class="btn" onclick="openSub('Ολοκληρώθηκε')">Ολοκληρώθηκε</button>
   </div>
 
-  <!-- Εργασίες (εμφανίζονται κάτω από τις κατηγορίες) -->
+  <!-- Εργασίες -->
   <div id="taskMenu"></div>
 
 </div>
 
-<!-- Popup φωτογραφίας -->
+<!-- Popup φωτογραφιών -->
 <div class="popup" id="photopopup">
   <div class="box photo-box">
     <h2 id="photoTitle"></h2>
-    <img id="photoImg" src="">
+    <div id="photoContainer"></div>
     <button class="btn close" onclick="closePhoto()">Κλείσιμο</button>
   </div>
 </div>
@@ -86,43 +85,56 @@ h1 { color:#1f3b5d; }
 let currentPoint = "";
 let currentCategory = "";
 
-// Εργασίες ανά μέτωπο
+// Εργασίες ανά μέτωπο — ΜΕ ΠΟΛΛΑΠΛΕΣ ΦΩΤΟΓΡΑΦΙΕΣ
 const tasks = {
   "01": {
     "Προς Υλοποίηση": {
-  "Επιχρίσματα": [
-    "epichrismata_01.jpg",
-    "epichrismata_02.jpg",
-    "epichrismata_03.jpg"
-  ],
-  "Ελκυστήρες": [
-    "elkystires_01.jpg",
-    "elkystires_02.jpg",
-    "elkystires_03.jpg"
-  ]
-},
+      "Επιχρίσματα": [
+        "epichrismata_01.jpg",
+        "epichrismata_02.jpg",
+        "epichrismata_03.jpg"
+      ],
+      "Ελκυστήρες": [
+        "elkystires_01.jpg",
+        "elkystires_02.jpg"
+      ]
+    },
     "Σε Εξέλιξη": {
-      "Λιθοδομές": "photo3.jpg"
+      "Λιθοδομές": [
+        "lithodomes_01.jpg"
+      ]
     },
     "Ολοκληρώθηκε": {
-      "Αποκατάσταση": "photo4.jpg",
-      "Βαθ. Αρμολογήματα": "photo5.jpg",
-      "Ενέματα": "photo6.jpg",
-      "Τυφλά βλήτρα": "photo7.jpg",
-      "Ραφές inox": "photo8.jpg"
+      "Αποκατάσταση": ["apokatastasi_01.jpg"],
+      "Βαθ. Αρμολογήματα": ["armologimata_01.jpg"],
+      "Ενέματα": ["enemata_01.jpg"],
+      "Τυφλά βλήτρα": ["tyfla_01.jpg"],
+      "Ραφές inox": ["inox_01.jpg"]
     }
   },
 
   "02": {
-    "Προς Υλοποίηση": { "Αρμολογήματα": "photo9.jpg" },
-    "Σε Εξέλιξη": { "Ενισχύσεις": "photo10.jpg" },
-    "Ολοκληρώθηκε": { "Στεγανοποίηση": "photo11.jpg" }
+    "Προς Υλοποίηση": {
+      "Αρμολογήματα": ["armologimata_02.jpg"]
+    },
+    "Σε Εξέλιξη": {
+      "Ενισχύσεις": ["enisxyseis_01.jpg"]
+    },
+    "Ολοκληρώθηκε": {
+      "Στεγανοποίηση": ["steganopoiisi_01.jpg"]
+    }
   },
 
   "03": {
-    "Προς Υλοποίηση": { "Επιχρίσματα": "photo12.jpg" },
-    "Σε Εξέλιξη": { "Καθαρισμοί": "photo13.jpg" },
-    "Ολοκληρώθηκε": { "Αποκατάσταση": "photo14.jpg" }
+    "Προς Υλοποίηση": {
+      "Επιχρίσματα": ["epichrismata_03_01.jpg"]
+    },
+    "Σε Εξέλιξη": {
+      "Καθαρισμοί": ["katharismoi_01.jpg"]
+    },
+    "Ολοκληρώθηκε": {
+      "Αποκατάσταση": ["apokatastasi_03.jpg"]
+    }
   }
 };
 
@@ -133,7 +145,7 @@ function loadMap(event) {
   img.style.display = "block";
 }
 
-// Επιλογή μετώπου → εμφανίζει το δικό του υπομενού
+// Επιλογή μετώπου
 function selectPoint(point) {
   currentPoint = point;
 
@@ -145,17 +157,15 @@ function selectPoint(point) {
 
   document.getElementById("submenuTitle").innerText = titles[point];
   document.getElementById("submenu").style.display = "block";
-
-  // Καθαρίζει το task menu όταν αλλάζεις μέτωπο
   document.getElementById("taskMenu").innerHTML = "";
 }
 
-// Άνοιγμα κατηγορίας → εμφανίζει τις εργασίες ΚΑΤΩ από το μενού
+// Άνοιγμα κατηγορίας
 function openSub(category) {
   currentCategory = category;
 
   let container = document.getElementById("taskMenu");
-  container.innerHTML = ""; // καθαρισμός
+  container.innerHTML = "";
 
   let items = tasks[currentPoint][category];
 
@@ -163,16 +173,25 @@ function openSub(category) {
 
   for (let task in items) {
     container.innerHTML += `
-      <button class="btn" onclick="openPhoto('${task}', '${items[task]}')">
+      <button class="btn" onclick="openPhoto('${task}')">
         ${task}
       </button>`;
   }
 }
 
-// Φωτογραφία (popup)
-function openPhoto(task, img) {
+// Popup με ΠΟΛΛΑΠΛΕΣ φωτογραφίες
+function openPhoto(task) {
+  const photos = tasks[currentPoint][currentCategory][task];
+
   document.getElementById("photoTitle").innerText = task;
-  document.getElementById("photoImg").src = img;
+
+  let html = "";
+  photos.forEach(src => {
+    html += `<img src="${src}">`;
+  });
+
+  document.getElementById("photoContainer").innerHTML = html;
+
   document.getElementById("photopopup").style.display = "flex";
 }
 
