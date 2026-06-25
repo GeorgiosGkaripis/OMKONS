@@ -128,7 +128,7 @@ let currentCategory = "";
 let currentPhotos = [];
 let currentIndex = 0;
 
-// Εργασίες ανά μέτωπο — ΒΑΣΗ ΤΟΥ ΠΙΝΑΚΑ ΠΟΥ ΜΟΥ ΕΣΤΕΙΛΕΣ
+// Εργασίες ανά μέτωπο — με λατινικά filenames
 const tasks = {
   "01": {
     "Προς Υλοποίηση": {
@@ -136,29 +136,32 @@ const tasks = {
       "Ελκυστήρες": ["elkystires_01.jpg"]
     },
     "Ολοκληρώθηκε": {
-      "Αποκατάσταση": ["apokatastasi_01.jpg"],
-      "Βαθ. Αρμολογήματα": ["armologimata_01.jpg"],
-      "Ενέματα": ["enemata_01.jpg"],
-      "Τυφλά Βλήτρα": ["tyfla_01.jpg"],
-      "Ραφές inox": ["inox_01.jpg"]
+      "Αποκατάσταση": ["apokatastasi_toixopoiias.jpg"],
+      "Βαθ. Αρμολογήματα": ["armologimata.jpg"],
+      "Ενέματα": ["enemata.jpg"],
+      "Τυφλά Βλήτρα": ["tyfla_vlitra.jpg"],
+      "Ραφές inox": ["rafes_me_inox.jpg"]
     },
     "Σε Εξέλιξη": {
-      "-": ["elkystires_old_01.jpg"]
+      "Ελκυστήρες Υφιστάμενη": ["elkystires_yfistameni.jpg"]
     }
   },
 
   "02": {
     "Προς Υλοποίηση": {},
     "Ολοκληρώθηκε": {
-      "Αποκατάσταση τόξων": ["apokatastasi_toxon_02.jpg"],
-      "Ενέματα τοπικά": ["enemata_topika_02.jpg"],
-      "Καθαρίσεις": ["katharismoi_02.jpg"],
-      "Ικριώματα": ["ikriomata_02.jpg"],
-      "Ραφές με inox": ["rafes_inox_02.jpg"]
+      "Αποκατάσταση τόξων": ["apokatastasi_toxon.jpg"],
+      "Ενέματα τοπικά": [
+        "enemata_topika_1.jpg",
+        "enemata_topika_2.jpg"
+      ],
+      "Καθαρίσεις": ["kathariseis.jpg"],
+      "Ικριώματα": ["ikriomata.jpg"],
+      "Ραφές με inox": ["rafes_me_inox.jpg"]
     },
     "Σε Εξέλιξη": {
-      "Ελκυστήρες Υφιστάμενη": ["elkystires_old_02.jpg"],
-      "Τυφλά Βλήτρα": ["tyfla_02.jpg"]
+      "Ελκυστήρες Υφιστάμενη": ["elkystires_yfistameni.jpg"],
+      "Τυφλά Βλήτρα": ["tyfla_vlitra.jpg"]
     }
   },
 
@@ -166,16 +169,16 @@ const tasks = {
     "Προς Υλοποίηση": {
       "Ελκυστήρες": ["elkystires_03.jpg"],
       "Ενέματα": ["enemata_03.jpg"],
-      "Προς επιχρίσματα": ["pros_epichrismata_03.jpg"],
-      "Ικριώματα": ["ikriomata_03.jpg"]
+      "Προς επιχρίσματα": ["pros_epichrismata.jpg"],
+      "Ικριώματα": ["ikriomata.jpg"]
     },
     "Ολοκληρώθηκε": {
-      "Καθαρίσεις": ["katharismoi_03.jpg"]
+      "Καθαρίσεις": ["kathariseis.jpg"]
     },
     "Σε Εξέλιξη": {
-      "Αποκατάσταση τόξων": ["apokatastasi_toxon_03.jpg"],
-      "Ραφές με inox": ["rafes_inox_03.jpg"],
-      "Βαθιά Αρμολογήματα": ["armologimata_vathia_03.jpg"]
+      "Αποκατάσταση τόξων": ["apokatastasi_toxon.jpg"],
+      "Ραφές με inox": ["rafes_me_inox.jpg"],
+      "Βαθιά Αρμολογήματα": ["armologimata.jpg"]
     }
   }
 };
