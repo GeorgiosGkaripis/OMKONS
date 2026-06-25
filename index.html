@@ -87,7 +87,7 @@ h1 { color:#1f3b5d; }
 
   <!-- Μενού μετώπων -->
   <div class="section-title">Επιλογή Μετώπου</div>
-  <button class="btn" onclick="selectPoint('01')">01_Κωδωνοστασιου</button>
+  <button class="btn" onclick="selectPoint('01')">01_Κωδωνοστασίου</button>
   <button class="btn" onclick="selectPoint('02')">02 Παναγία Πορταΐτισσα</button>
   <button class="btn" onclick="selectPoint('03')">03 Άγιοι Κωνσταντίνος</button>
 
@@ -128,22 +128,29 @@ let currentCategory = "";
 let currentPhotos = [];
 let currentIndex = 0;
 
-// Εργασίες ανά μέτωπο — με λατινικά filenames
+// Εργασίες ανά μέτωπο — με πολλαπλές φωτογραφίες
 const tasks = {
   "01": {
     "Προς Υλοποίηση": {
-      "Επιχρίσματα": ["epichrismata_01.jpg"],
-      "Ελκυστήρες": ["elkystires_01.jpg"]
+      "Επιχρίσματα": [
+        "epichrismata_01.jpg",
+        "epichrismata_02.jpg",
+        "epichrismata_03.jpg"
+      ],
+      "Ελκυστήρες": [
+        "elkystires_01.jpg",
+        "elkystires_02.jpg"
+      ]
     },
     "Ολοκληρώθηκε": {
-      "Αποκατάσταση": ["apokatastasi_toixopoiias.jpg"],
-      "Βαθ. Αρμολογήματα": ["armologimata.jpg"],
-      "Ενέματα": ["enemata.jpg"],
-      "Τυφλά Βλήτρα": ["tyfla_vlitra.jpg"],
-      "Ραφές inox": ["rafes_me_inox.jpg"]
+      "Αποκατάσταση": ["apokatastasi_01.jpg"],
+      "Βαθ. Αρμολογήματα": ["armologimata_01.jpg"],
+      "Ενέματα": ["enemata_01.jpg"],
+      "Τυφλά Βλήτρα": ["tyfla_01.jpg"],
+      "Ραφές inox": ["inox_01.jpg"]
     },
     "Σε Εξέλιξη": {
-      "Ελκυστήρες Υφιστάμενη": ["elkystires_yfistameni.jpg"]
+      "Κουφώματα": ["koyfvmata.jpg"]
     }
   },
 
@@ -195,7 +202,7 @@ function selectPoint(point) {
   currentPoint = point;
 
   const titles = {
-    "01": "01_Κωδωνοστασιου – Κατηγορίες Εργασιών",
+    "01": "01_Κωδωνοστασίου – Κατηγορίες Εργασιών",
     "02": "02 Παναγία Πορταΐτισσα – Κατηγορίες Εργασιών",
     "03": "03 Άγιοι Κωνσταντίνος – Κατηγορίες Εργασιών"
   };
