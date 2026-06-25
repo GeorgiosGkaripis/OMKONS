@@ -61,6 +61,13 @@ h1 { color:#1f3b5d; }
 #prevBtn { left:-60px; }
 #nextBtn { right:-60px; }
 
+#counter {
+  margin-top:10px;
+  font-size:16px;
+  font-weight:bold;
+  color:#333;
+}
+
 .close { background:#444 !important; margin-top:15px; }
 </style>
 </head>
@@ -80,7 +87,7 @@ h1 { color:#1f3b5d; }
 
   <!-- Μενού μετώπων -->
   <div class="section-title">Επιλογή Μετώπου</div>
-  <button class="btn" onclick="selectPoint('01')">01_Κωδωνοστασίου</button>
+  <button class="btn" onclick="selectPoint('01')">01_ΚΩΔΩΝΟΣΤΑΣΙΟΥ</button>
   <button class="btn" onclick="selectPoint('02')">02 Παναγία Πορταΐτισσα</button>
   <button class="btn" onclick="selectPoint('03')">03 Άγιοι Κωνσταντίνος</button>
 
@@ -108,6 +115,8 @@ h1 { color:#1f3b5d; }
     <img id="photoImg" src="">
 
     <button id="nextBtn" class="arrow-btn">→</button>
+
+    <div id="counter">1 / 1</div>
 
     <button class="btn close" onclick="closePhoto()">Κλείσιμο</button>
   </div>
@@ -144,30 +153,6 @@ const tasks = {
       "Ενέματα": ["enemata_01.jpg"],
       "Τυφλά βλήτρα": ["tyfla_01.jpg"],
       "Ραφές inox": ["inox_01.jpg"]
-    }
-  },
-
-  "02": {
-    "Προς Υλοποίηση": {
-      "Αρμολογήματα": ["armologimata_02.jpg"]
-    },
-    "Σε Εξέλιξη": {
-      "Ενισχύσεις": ["enisxyseis_01.jpg"]
-    },
-    "Ολοκληρώθηκε": {
-      "Στεγανοποίηση": ["steganopoiisi_01.jpg"]
-    }
-  },
-
-  "03": {
-    "Προς Υλοποίηση": {
-      "Επιχρίσματα": ["epichrismata_03_01.jpg"]
-    },
-    "Σε Εξέλιξη": {
-      "Καθαρισμοί": ["katharismoi_01.jpg"]
-    },
-    "Ολοκληρώθηκε": {
-      "Αποκατάσταση": ["apokatastasi_03.jpg"]
     }
   }
 };
@@ -221,6 +206,8 @@ function openPhoto(task) {
   document.getElementById("photoTitle").innerText = task;
   document.getElementById("photoImg").src = currentPhotos[currentIndex];
 
+  updateCounter();
+
   document.getElementById("photopopup").style.display = "flex";
 
   document.getElementById("prevBtn").onclick = () => changePhoto(-1);
@@ -234,6 +221,12 @@ function changePhoto(direction) {
   if (currentIndex >= currentPhotos.length) currentIndex = 0;
 
   document.getElementById("photoImg").src = currentPhotos[currentIndex];
+  updateCounter();
+}
+
+function updateCounter() {
+  document.getElementById("counter").innerText =
+    (currentIndex + 1) + " / " + currentPhotos.length;
 }
 
 function closePhoto() {
@@ -243,4 +236,3 @@ function closePhoto() {
 
 </body>
 </html>
- 
